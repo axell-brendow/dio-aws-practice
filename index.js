@@ -64,6 +64,10 @@ const findById = async (event, context) => {
         .promise();
 }
 
+const findAll = async (event, context) => {
+    return await dynamo.scan({ TableName: "Products" }).promise();
+}
+
 exports.handler = async (event, context) => {
     let body;
     let statusCode = 200;
@@ -78,6 +82,7 @@ exports.handler = async (event, context) => {
             case "PUT /items/{id}": body = update(event, context); break;
             case "DELETE /items/{id}": body = destroy(event, context); break;
             case "GET /items/{id}": body = findById(event, context); break;
+            case "GET /items": body = findAll(event, context); break;
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`);
         }
