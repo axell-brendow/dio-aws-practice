@@ -19,6 +19,25 @@ const create = async (event, context) => {
     return `Put item ${body.id}`;
 }
 
+const update = async (event, context) => {
+    const body = JSON.parse(event.body);
+
+    await dynamo
+        .update({
+            TableName: "Products",
+            Key: {
+                id: event.pathParameters.id
+            },
+            UpdateExpression: 'set price = :r',
+            ExpressionAttributeValues: {
+                ':r': body.price,
+            },
+        })
+        .promise();
+
+    return `Put item ${event.pathParameters.id}`;
+}
+
 exports.handler = async (event, context) => {
     let body;
     let statusCode = 200;
@@ -30,6 +49,7 @@ exports.handler = async (event, context) => {
     try {
         switch (event.routeKey) {
             case "POST /items": body = create(event, context); break;
+            case "PUT /items/{id}": body = update(event, context); break;
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`);
         }
