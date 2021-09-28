@@ -38,6 +38,21 @@ const update = async (event, context) => {
     return `Put item ${event.pathParameters.id}`;
 }
 
+const destroy = async (event, context) => {
+    console.log(event.pathParameters.id)
+
+    await dynamo
+        .delete({
+            TableName: "Products",
+            Key: {
+                id: event.pathParameters.id
+            }
+        })
+        .promise();
+
+    return `Deleted item ${event.pathParameters.id}`;
+}
+
 exports.handler = async (event, context) => {
     let body;
     let statusCode = 200;
@@ -49,6 +64,7 @@ exports.handler = async (event, context) => {
     try {
         switch (event.routeKey) {
             case "POST /items": body = create(event, context); break;
+            case "DELETE /items/{id}": body = destroy(event, context); break;
             case "PUT /items/{id}": body = update(event, context); break;
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`);
