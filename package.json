@@ -1,0 +1,18 @@
+{
+  "name": "dio-aws-practice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "zip": "zip -r function.zip .",
+    "update-function": "aws lambda update-function-code --function-name DIOAWSPractice --zip-file fileb://function.zip",
+    "deploy": "npm run zip && npm run update-function",
+    "postdeploy": "rm function.zip"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.996.0"
+  }
+}
