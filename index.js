@@ -7,7 +7,7 @@ const create = async (event, context) => {
 
     await dynamo
         .put({
-            TableName: "Products",
+            TableName: "Product",
             Item: {
                 id: body.id,
                 price: body.price,
@@ -24,7 +24,7 @@ const update = async (event, context) => {
 
     await dynamo
         .update({
-            TableName: "Products",
+            TableName: "Product",
             Key: {
                 id: event.pathParameters.id
             },
@@ -43,7 +43,7 @@ const destroy = async (event, context) => {
 
     await dynamo
         .delete({
-            TableName: "Products",
+            TableName: "Product",
             Key: {
                 id: event.pathParameters.id
             }
@@ -53,10 +53,10 @@ const destroy = async (event, context) => {
     return `Deleted item ${event.pathParameters.id}`;
 }
 
-const findById = async (event, context) => {
-    return await dynamo
+const findById = (event, context) => {
+    return dynamo
         .get({
-            TableName: "Products",
+            TableName: "Product",
             Key: {
                 id: event.pathParameters.id
             }
@@ -64,8 +64,8 @@ const findById = async (event, context) => {
         .promise();
 }
 
-const findAll = async (event, context) => {
-    return await dynamo.scan({ TableName: "Products" }).promise();
+const findAll = (event, context) => {
+    return dynamo.scan({ TableName: "Product" }).promise();
 }
 
 exports.handler = async (event, context) => {
@@ -78,17 +78,17 @@ exports.handler = async (event, context) => {
 
     try {
         switch (event.routeKey) {
-            case "POST /items": body = create(event, context); break;
-            case "PUT /items/{id}": body = update(event, context); break;
-            case "DELETE /items/{id}": body = destroy(event, context); break;
-            case "GET /items/{id}": body = findById(event, context); break;
-            case "GET /items": body = findAll(event, context); break;
+            case "POST /items": body = await create(event, context); break;
+            case "PUT /items/{id}": body = await update(event, context); break;
+            case "DELETE /items/{id}": body = await destroy(event, context); break;
+            case "GET /items/{id}": body = await findById(event, context); break;
+            case "GET /items": body = await findAll(event, context); break;
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`);
         }
     } catch (err) {
         statusCode = 400;
-        body = err.message;
+        body = JSON.stringify(err, null, 2);
     } finally {
         body = JSON.stringify(body);
     }
