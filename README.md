@@ -1,5 +1,7 @@
 # dio-aws-practice
 
+![Project architecture: AWS API Gateway, AWS IAM, AWS DynamoDB](./aws-architecture.png)
+
 ## Calling the lambda
 
 ### Fetching all items
